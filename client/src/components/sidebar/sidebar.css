@@ -1,0 +1,11 @@
+#sidebar{
+    position: fixed;
+    top: 80px;
+    left: 0px;
+    background-color: #fdf0d5;
+    height: calc(100% - 80px);
+    color: #283618;
+}
+.content-area{
+    margin-left: 100px;
+}
