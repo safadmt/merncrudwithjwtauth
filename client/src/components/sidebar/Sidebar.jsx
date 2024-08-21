@@ -9,7 +9,7 @@ function Sidebar({content}) {
             <ul className='w-full'>
                 {content?.map((item)=> (
                     <li className='' key={item.value}>
-                        <Link to={'/admin/products'} className='flex items-center pl-8 pr-8 justify-start hover:bg-[#ffffff] gap-3 hover:text-black py-2'><span>{item.icon}</span>{item.value}</Link>
+                        <Link to={item.link} className='flex items-center pl-8 pr-8 justify-start hover:bg-[#ffffff] gap-3 hover:text-black py-2'><span>{item.icon}</span>{item.value}</Link>
                     </li>
                 ))}
             </ul>

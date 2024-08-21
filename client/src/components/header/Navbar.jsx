@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect,  } from 'react';
 import './navbar.css';
 import { IoMenu } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
-import { AuthContext, SidebarShow } from '../../context/userContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useGlobalContext } from '../../context&reducer/context';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Navbar = ({ title, items }) => {
     const [windowSize, setWindowSize] = useState(window.innerWidth);
     const [windowMenu, setWindowMenu] = useState(window.innerWidth >= 600);
     const [ulDisplay, setUlDisplay] = useState(window.innerWidth < 600 ? "none" : "flex");
-    const {isAuthSidebarShow,setIsAuthSidebarShow} = useContext(SidebarShow)
-    const {loginorregister, setLoginorregister} = useContext(AuthContext)
-
+    const {state,dispatch} = useGlobalContext()
+    
     const Navigate = useNavigate()
     useEffect(() => {
         const handleWindowSize = () => {
             const currentWidth = window.innerWidth;
             setWindowSize(currentWidth);
-
+            
             if (currentWidth < 600) {
                 setUlDisplay("none");
                 setWindowMenu(true);
@@ -33,8 +34,7 @@ const Navbar = ({ title, items }) => {
             window.removeEventListener("resize", handleWindowSize);
         };
     }, []);
-    useEffect(()=> {console.log(isAuthSidebarShow);
-    }, [isAuthSidebarShow])
+    
     const handleMenuToggle = () => {
         if (windowMenu) {
             setUlDisplay("flex");
@@ -45,21 +45,33 @@ const Navbar = ({ title, items }) => {
         }
     };
 
+    const handleLogout = async() => {
+        try{
+            const response = await axios.get('/auth/logout')
+            if(response.data) {
+                dispatch({type: "set_user", payload: {}})
+                toast.success("Logout successfull")
+                Navigate('/')
+            }
+        }catch(err) {
+
+        }
+        
+    }
     const handleClick = (item)=> {
-        console.log(item);
-    
         switch (item) {
             case 'Login': {
-                setIsAuthSidebarShow(true)
+                dispatch({type: "set_auth_sidebar", payload: true})
             }
             break;
             case 'Signup': {
-                setIsAuthSidebarShow(true)
-                setLoginorregister(false)
+                dispatch({type: "set_auth_sidebar", payload: true})
+                dispatch({type: "set_login_register", payload: false})
+                
             }
             break;
-            case 'Admin': {
-                Navigate('/auth/admin-login')
+            case 'Logout': {
+                handleLogout()
             }
             default:
                 break;
@@ -76,11 +88,16 @@ const Navbar = ({ title, items }) => {
                         <IoClose size={25} onClick={handleMenuToggle} />
                     )}
                 </div>
+                {state?.user?.username ? <ul className='font-medium' style={{ display: ulDisplay }}>
+                    <li><Link to={'/shop'}>shop</Link></li>
+                    <li>{state?.user?.username}</li>
+                    <li className='hover:cursor-pointer' onClick={handleLogout}>Logout</li>
+                </ul> :
                 <ul className='font-medium hover:cursor-pointer' style={{ display: ulDisplay }}>
                     {items?.map((item, index) => (
                         <li key={index} onClick={()=> handleClick(item)}>{item}</li>
                     ))}
-                </ul>
+                </ul>}
             </div>
         </div>
     );

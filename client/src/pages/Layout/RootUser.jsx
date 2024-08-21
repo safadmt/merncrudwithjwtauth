@@ -2,21 +2,17 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Outlet } from 'react-router-dom'
 import Navbar from '../../components/header/Navbar'
 import Auth from '../../components/auth/Auth'
-import { SidebarShow} from '../../context/userContext'
+import { useGlobalContext} from '../../context&reducer/context'
 function RootUser() {
-  const {isAuthSidebarShow, setIsAuthSidebarShow} = useContext(SidebarShow)
   const [navBarTitle] = useState("User management")
-  const [navbarItems] = useState(['Login', 'Signup', 'Admin'])
+  const [navbarItems] = useState(['Login', 'Signup'])
+  const {state, dispatch} = useGlobalContext()
 
-  useEffect(()=> {
-    console.log(isAuthSidebarShow);
-    
-  }, [isAuthSidebarShow])
   return (
     <div>
       
         <Navbar title={navBarTitle} items={navbarItems}/>
-        {isAuthSidebarShow &&<Auth/>}
+        {state.isShowAuthSidebar &&<Auth/>}
         <div>
             <Outlet/>
         </div>

@@ -1,11 +1,11 @@
 import React from 'react'
 
 function InputCmp(props) {
-  const {value="", handleChange,name="", placeholder=""} = props
-  return <input type="text" name={name} id="" 
+  const {value="",type ,handleChange,name="", placeholder=""} = props
+  return <input type={type} name={name} 
   value={value}
-  onChange={(e)=> handleChange}
-  className='border-b-2 outline-none bg-white text-gray-600 w-full font-medium px-4 py-2 mb-2'
+  onChange={handleChange}
+  className='border-b-2 outline-none bg-white text-gray-600 w-full font-medium px-4 py-2 mt-2'
   placeholder={placeholder}/>
 }
 

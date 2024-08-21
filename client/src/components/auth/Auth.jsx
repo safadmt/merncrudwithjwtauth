@@ -1,23 +1,27 @@
-import React, { useContext } from "react";
+import React, { useEffect } from "react";
 import "./auth.css";
 import UserLogin from "./UserLogin";
 import { IoClose } from "react-icons/io5";
 import Signup from "./Signup";
-import { AuthContext, SidebarShow } from "../../context/userContext";
+import { useGlobalContext } from "../../context&reducer/context";
 function Auth() {
-    const {loginorregister, setLoginorregister} = useContext(AuthContext)
-    const {isAuthSidebarShow,setIsAuthSidebarShow} = useContext(SidebarShow)
-   
+    const {state,dispatch} = useGlobalContext()
+   const handleClose = ()=> {
+    dispatch({type: "set_auth_sidebar",payload:false})
+    dispatch({type: "set_login_register",payload:true})
+
+   }
   return (
     <div className="authsidebar p-10">
-        <div><IoClose size={25} className="float-right" onClick={()=> setIsAuthSidebarShow(false)}/></div>
+        <div><IoClose size={25} className="float-right" 
+        onClick={handleClose}/></div>
       <div className="mt-8">
-        <div className="text-center font-bold text-xl mb-2 text-[#0336FF]">{loginorregister ? "Login" : "Register"}</div>
-        <div><p className="text-sm">{loginorregister ? "Welcome back! Please log in to access your account and continue your journey with us!." : 
+        <div className="text-center font-bold text-xl mb-2 text-[#0336FF]">{state.is_login_or_regiser ? "Login" : "Register"}</div>
+        <div><p className="text-sm">{state.is_login_or_regiser ? "Welcome back! Please log in to access your account and continue your journey with us!." : 
         "Create your account to get started. Join us now!" }</p></div>
         <div className="mt-8">
 
-         {loginorregister ? <UserLogin /> : <Signup/>}
+         {state.is_login_or_regiser ? <UserLogin /> : <Signup/>}
           
         </div>
       </div>
