@@ -12,7 +12,11 @@ import authRoute from './routes/auth.js';
 
 app.use('/', express.static(path.join(dirname(curreFilePath), 'public')))
 
-app.use(cors({origin:'http://localhost:3000'})) 
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials:true
+  })) 
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 app.use(cookieParser())

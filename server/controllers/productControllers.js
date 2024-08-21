@@ -57,7 +57,8 @@ export default {
       console.log(updated);
       return res.status(200).json("success")
     }else{
-      const updated = await productHelpers.updateProduct(productid,req.body)
+      let {name, price, model,description} = req.body
+      const updated = await productHelpers.updateProduct(productid,{name,price,model,description})
       console.log(updated);
       if(updated) {
         return res.status(200).json('success')

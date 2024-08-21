@@ -57,7 +57,7 @@ export default {
       req.body.role = 'user'
       const newuser = await userHelper.signuUser(req.body);
       // n
-      return res.status(200).json(newuser);
+      return res.status(200).json({user:newuser});
     } catch (err) {
       console.log(err);
     }
@@ -81,15 +81,21 @@ export default {
         return res.status(401).json("Incorrect email")
       }
       
-        const accessToken = await generateToken('accessToken', {id:user.user_id, email:user.email}) 
-        const refreshToken = await generateToken('refreshToken', {id: user.user_id, email:user.email})
-          res.setHeader("Authorization", `Bearer ${accessToken}`)
+        const accessToken = await generateToken('accessToken', {id:user.user_id, username:user.username,role:user.role}) 
+        const refreshToken = await generateToken('refreshToken', {id: user.user_id, username:user.username, role:user.role})
+          res.cookie('accessToken', accessToken, {
+            httpOnly:true, 
+            secure:true, 
+            sameSite:'None', 
+            maxAge: 1 * 60 * 1000
+          })
           res.cookie('jwt', refreshToken, {
             httpOnly:true, 
             secure:true, 
             sameSite:'None', 
-            maxAge: 7 * 24 * 60 * 60 * 1000})
-          res.status(200).json({user, accessToken});
+            maxAge: 3 * 24 * 60 * 60 * 1000})
+            const {role, user_id, username} = user
+          res.status(200).json({user: {user_id,role,username}});
          
       
     } catch (err) {
@@ -139,7 +145,8 @@ export default {
 
   refreshToken: (req,res) => { 
      let cookeis = req.cookies;
-     console.log(cookeis);
+     
+     let valid = false
      
      if(!cookeis?.jwt) return res.status(401).json({message: "Unauthorized"})
       const refreshToken = cookeis.jwt
@@ -153,7 +160,7 @@ export default {
       if(!user) return res.status(401).json('Unauthorized');
       const accessToken = await generateToken('accessToken', {id:user.user_id,email:user.email})
       res.setHeader("Authorization", `Bearer ${accessToken}`)
-      res.json('ok')
+      
     })
 
 
@@ -163,6 +170,10 @@ export default {
     const cookies = req.cookies?.jwt
     if(!cookies) return res.sendStatus(204)
     res.clearCookie('jwt', {httpOnly:true,sameSite:'None',secure:true})
-    res.json({message:"Cookie cleared"})
+    res.clearCookie('accessToken', {httpOnly:true,sameSite:'None',secure:true})
+    res.status(200).json({message:"Cookie cleared"})
+  },
+  isAuthorize : (req,res,next)=> {
+    res.status(200).json({isAuth:1})
   }
 };
