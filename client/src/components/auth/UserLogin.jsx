@@ -15,6 +15,8 @@ function UserLogin() {
     async function handleSubmit (e) {
       e.preventDefault()
       const {email,password} = loginInfo
+      console.log(email,password);
+      
       try{
         await userSchema.validate({username:"safadf", email,password})
         const response = await axios.post('auth/login',loginInfo)
@@ -29,8 +31,6 @@ function UserLogin() {
           toast.success("Login successfull")
         }
       }catch(error) {
-        console.log(error.response.data);
-        
         if(error.name === 'ValidationError') {
           toast.warning(error.message)
         }else if(error?.response?.status === 400 ) {
@@ -40,6 +40,8 @@ function UserLogin() {
             toast.warning(item.message)
           })
           
+        }else if(error?.response?.status === 409) {
+          toast.warning(error?.response?.data?.error)
         }
       }
       

@@ -4,7 +4,6 @@ import {RouterProvider} from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
 import RootUser from './pages/Layout/RootUser'
 import Home from './pages/user/home/Home'
-import ViewProduct from './pages/user/viewproduct/ViewProduct'
 import RootAdmin from './pages/Layout/RootAdmin'
 import AdminLogin from './pages/admin/AdminLogin'
 import {  GlobalStateProvider } from './context&reducer/context'
@@ -26,10 +25,6 @@ const router = createBrowserRouter([
         {
             path: '/',
             element : <Home/>
-        },
-        {
-          path: '/view-product',
-          element : <ViewProduct/>
         },
         {
           path: '/shop',

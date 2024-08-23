@@ -17,21 +17,21 @@ export default {
       const product = await productHelpers.createProduct(req.body);
       return res.status(200).json(product);
     } catch (err) {
-      console.log(err);
+      next(err)
     }
   },
 
-  getProducts : async function (req,res) {
+  getProducts : async function (req,res,next) {
     try{
       const products = await productHelpers.listAllProducts()
       res.status(200).json(products)
     }catch(err) {
-      console.log(err);
+      next(err);
       
     }
   },
 
-  updateOneProduct : async function (req,res) {
+  updateOneProduct : async function (req,res,next) {
     if(!req.params.productid) return res.status(404).json("Params not found")
     if(!req.body ) {
       return res.status(400).json("Request body not found")
@@ -43,7 +43,7 @@ export default {
     
     console.log("body",req.body);
     productid = parseInt(productid)
-    
+    try{
     if(req.file) {
       
       const product = await productHelpers.getOneProduct(productid)
@@ -64,9 +64,12 @@ export default {
         return res.status(200).json('success')
       }
     }
+    }catch(err) {
+      next(err)
+    }
   },
 
-  deleteOneProduct : async function (req,res) {
+  deleteOneProduct : async function (req,res,next) {
     const {productid} = req.params
     try{
       const response = await productHelpers.deleteOneProduct(parseInt(productid))
@@ -74,17 +77,17 @@ export default {
       return res.status(200).json("deleted successfully")
     }catch(err) {
       
-      console.log(err);
+      next(err);
     }
   },
 
-  getOneProduct : async function (req,res) {
+  getOneProduct : async function (req,res,next) {
     const {productid} = req.params;
     try{
       const product = await productHelpers.getOneProduct(parseInt(productid))
       return res.status(200).json(product)
     }catch(err) {
-      console.log(err);
+      next
       
     }
   }

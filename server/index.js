@@ -9,6 +9,7 @@ const app = express();
 import userRoute from './routes/user.js';
 import productRoute from './routes/product.js';
 import authRoute from './routes/auth.js';
+import errorHandler from './middleware/errorHandle.js';
 
 app.use('/', express.static(path.join(dirname(curreFilePath), 'public')))
 
@@ -19,6 +20,7 @@ app.use(cors({
   })) 
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
+app.use(errorHandler)
 app.use(cookieParser())
 app.use('/user', userRoute)
 app.use('/product', productRoute)

@@ -25,7 +25,8 @@ const userSchema = object({
     username: string()
     .min(3, "Username must be atleast 3 charactors long").trim("Username is required")
     .required("Username is required"),
-    email: string().email("Provide a valid email").required("Email is required"),
-    password: string().min(8, "Password minimum 8 charactors required").required("Password is required")
+    email: string().trim("Email is required").email("Provide a valid email").required("Email is required"),
+    password: string().trim("Password is required").
+    min(8, "Password minimum 8 charactors required").required("Password is required")
 })
 export { productSchema , userSchema};

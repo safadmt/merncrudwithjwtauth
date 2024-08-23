@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/utils.js";
 
 export default {
-  adminSignup : async function (req, res) {
+  adminSignup : async function (req, res,nex) {
     if (!req.body) {
       return res
         .status(400)
@@ -31,15 +31,16 @@ export default {
       // n
       return res.status(200).json(newuser);
     } catch (err) {
-      console.log(err);
+      nex(err)
     }
   }, 
-  userSignup: async function (req, res) {
+  userSignup: async function (req, res, next) {
     if (!req.body) {
       return res
         .status(400)
         .json({ error: "Req.body not found. Please provide the user details" });
     }
+    console.log(req.body);
     
     
     const { error } = User.validate(req.body);
@@ -59,14 +60,16 @@ export default {
       // n
       return res.status(200).json({user:newuser});
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
-  userLogin: async function (req, res) {
+  userLogin: async function (req, res, next) {
     
     if (!req.body || !req.body.email || !req.body.password) {
       return res.status(400).json({ error: "Please provide email or password" });
     }
+    console.log(req.body);
+    
     try {
       const user = await userHelper.getUserByEmail(req.body.email);
       console.log(user)
@@ -99,18 +102,18 @@ export default {
          
       
     } catch (err) {
-      console.log(err);
+      next(err);
     }
   },
-  getAllUser : async function (req,res) {
+  getAllUser : async function (req,res,next) {
     try{
       const users = await userHelper.getUsers()
       res.status(200).json(users)
     }catch(err) {
-      console.log(err);
+      next(err);
     }
   },
-  deleteOneUser: async function (req,res) {
+  deleteOneUser: async function (req,res,next) {
     try{
       const {userid} = req.params
       const deleted = await userHelper.deleteUser(userid)
@@ -118,11 +121,10 @@ export default {
         return res.status(200).json("Deleted success")
       }
     }catch(err) {
-      console.log(err);
-      
+      next(err)
     }
   },
-  updateUser : async function name(req,res) {
+  updateUser : async function name(req,res,next) {
     const {userid} = req.params;
     if(!req.body) return res.status(400).json("requested body not found")
     const updated = await userHelper.updateUser(userid,req.body)
@@ -138,12 +140,12 @@ export default {
       
       return res.status(200).json(user)
     }catch(err) {
-      console.log();
+      next(err);
       
     }
   },
 
-  refreshToken: (req,res) => { 
+  refreshToken: (req,res,next) => { 
      let cookeis = req.cookies;
      
      let valid = false
@@ -156,24 +158,29 @@ export default {
       if(err) {
         return res.status(403).json("Forbidden")
       }
-      const user = await userHelper.getUser(userInfo.id)
+      try{
+        const user = await userHelper.getUser(userInfo.id)
       if(!user) return res.status(401).json('Unauthorized');
       const accessToken = await generateToken('accessToken', {id:user.user_id,email:user.email})
       res.setHeader("Authorization", `Bearer ${accessToken}`)
+      }catch(err){
+        next(err)
+      }
+      
       
     })
 
 
   },
 
-  logout : (req,res,next) => {
+  logout : (req,res) => {
     const cookies = req.cookies?.jwt
     if(!cookies) return res.sendStatus(204)
     res.clearCookie('jwt', {httpOnly:true,sameSite:'None',secure:true})
     res.clearCookie('accessToken', {httpOnly:true,sameSite:'None',secure:true})
     res.status(200).json({message:"Cookie cleared"})
   },
-  isAuthorize : (req,res,next)=> {
+  isAuthorize : (req,res)=> {
     res.status(200).json({isAuth:1})
   }
 };
