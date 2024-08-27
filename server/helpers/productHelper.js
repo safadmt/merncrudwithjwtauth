@@ -14,6 +14,9 @@ listAllProducts:async function() {
     const products = await prisma.products.findMany({
       where: {
         deleted:false
+      },
+      orderBy: {
+        product_id: 'desc'
       }
     })
     return products
@@ -33,7 +36,35 @@ deleteOneProduct: async function(productid) {
     })
     return response
 },
-
+search: async function(query) {
+  const product = await prisma.products.findMany({
+    where: {
+      deleted : false,
+      OR: [
+        {
+          name: {
+            contains: query, 
+            mode: 'insensitive', 
+          },
+        },
+        {
+          name: {
+            contains: query, 
+            mode: 'insensitive', 
+          },
+        },
+        {
+          description: {
+            contains: query, 
+            mode: 'insensitive',
+          },
+        }
+      ]
+    }
+  
+  })
+  return product
+},
 updateProduct : async function (id, productInfo) {
   console.log(productInfo);
   
@@ -56,4 +87,4 @@ getOneProduct : async function (id) {
 }
 //   deleteOneProduct(2)
 }
-// createProduct()
+// createProdu

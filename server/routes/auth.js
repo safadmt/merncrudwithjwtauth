@@ -5,7 +5,6 @@ const router = express.Router()
 
 router.post('/login', userControllers.userLogin);
 
-router.post('/admin/signup', userControllers.adminSignup)
 router.post('/signup', userControllers.userSignup);
 
 router.get('/admin', verifyAdmin, userControllers.isAuthorize)

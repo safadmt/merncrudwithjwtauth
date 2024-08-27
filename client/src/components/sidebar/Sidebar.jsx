@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './sidebar.css'
 function Sidebar({content}) {
   return (
-    <div className='w-[200px]'>
+    <div className='min-w-[180px] relative'>
     <div id='sidebar' className='bg-[#353535] text-white box-border py-4'>
         <div className='flex justify-center'>
             <ul className='w-full'>

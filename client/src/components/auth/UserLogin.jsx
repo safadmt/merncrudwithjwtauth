@@ -40,7 +40,7 @@ function UserLogin() {
             toast.warning(item.message)
           })
           
-        }else if(error?.response?.status === 409) {
+        }else if(error?.response?.status === 409 || error?.response?.status === 401) {
           toast.warning(error?.response?.data?.error)
         }
       }

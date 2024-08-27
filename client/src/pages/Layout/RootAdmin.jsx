@@ -35,9 +35,9 @@ function RootAdmin() {
       isAuthorized()
     },[])
   return (
-    <div>
+    <div className=''>
         <Navbar title={headingTitle} items={items}/>
-        <div className='flex relative w-full'>
+        <div className='flex w-full'>
             <Sidebar content={content}/>
             <div className='content-area'>
                     <Outlet />

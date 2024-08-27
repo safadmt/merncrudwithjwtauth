@@ -72,7 +72,7 @@ function AddProduct() {
     setProductInfo({...productInfo, [name]: value})
   }
   return (
-    <Fragment>
+    <div  className='w-8/12 px-6'>
       <ProductForm 
       handleChange={handleChange} 
       productInfo={productInfo} 
@@ -80,7 +80,7 @@ function AddProduct() {
       productError={productError}
       handleFile={handleFileChange}
       currentImg={currentImagePreviw}/>
-    </Fragment>
+    </div>
   )
 }
 

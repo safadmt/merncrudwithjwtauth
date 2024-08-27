@@ -49,7 +49,9 @@ export default {
       const product = await productHelpers.getOneProduct(productid)
       if(!product) return res.status(404).json({error: "product not found"})
       unlink(`./public/images/${product.image_id}`, (err)=> {
-        if(err) throw err;
+        if(err) {
+          console.log("unlink error")
+        }
       })
       
       req.body.image_id = req.file.filename;
@@ -90,5 +92,20 @@ export default {
       next
       
     }
+  },
+  searchProduct : async (req,res,next)=> {
+    const {search} = req.body
+   
+    if(!search) {
+      return res.status(400).json({error:"Search string not found"})
+    }
+    try{
+      const products = await productHelpers.search(search)
+      res.status(200).json(products)
+    }catch(err) {
+      next(err)
+    }
   }
 };
+
+

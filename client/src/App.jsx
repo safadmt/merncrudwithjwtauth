@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Shop from './pages/user/shop/Shop'
 import User from './pages/admin/User'
 import EditProduct from './pages/admin/EditProduct'
+import EditUser from './pages/admin/EditUser'
 const router = createBrowserRouter([
     {
       path: "/",
@@ -51,6 +52,10 @@ const router = createBrowserRouter([
         {
           path: '/admin/product/edit/:productId',
           element: <EditProduct/>
+        },
+        {
+          path: '/admin/user/edit/:userId',
+          element: <EditUser/>
         }
         
       ]

@@ -11,5 +11,6 @@ router.get('/admin/all',verifyAdmin, productControllers.getProducts)
 router.get('/:productid', productControllers.getOneProduct)
 router.delete('/:productid',verifyAdmin, productControllers.deleteOneProduct)
 router.patch('/:productid',verifyAdmin,upload, productControllers.updateOneProduct)
+router.post('/search', verifyAdmin, productControllers.searchProduct)
 
 export default router;

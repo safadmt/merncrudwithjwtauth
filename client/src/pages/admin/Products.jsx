@@ -3,9 +3,11 @@ import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { useGlobalContext } from '../../context&reducer/context'
+import './admin.css'
 function Products() {
     const Navigate = useNavigate()
     const [products, setProducts] = useState([])
+    const [searchQueury, setSearchQuery] = useState("")
     const [isPending, startTransition] = useTransition()
     const {state, dispatch} = useGlobalContext()
     useEffect(()=> {
@@ -57,11 +59,34 @@ function Products() {
              }  
          }
    }
+
+   async function handleSearch (e) {
+        const query = e.target.value
+        
+        if(!query) return
+        try{
+        const SearchResult = await axios.post('product/search', {search: query})
+        setProducts(SearchResult.data)
+        console.log(SearchResult);
+        
+        }catch(err) {
+            console.log(err);
+            
+        }
+    
+   }
   return (
-    <Fragment>
-{isPending ? <div>Pending...</div> : products.length === 0 ? <div>No products were created</div> : <div className="relative box-border overflow-x-auto shadow-md sm:rounded-lg">
+    <div className='mx-6'>
+        <div className='py-2 mr-4 w-full'>
+        <input type="search" name="search" placeholder='Search for products' 
+        className='py-2 px-4 w-full outline-1 outline-blue-600 border-2 rounded' 
+        onChange={handleSearch}/>
+    </div>
+{isPending ? <div>Pending...</div> : products.length === 0 ? <div>No products were created</div> : <div className="box-border shadow-md sm:rounded-lg">
+    
+    <div className='responsive-table-container my-4 w-full'>
     <table className=" text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <thead className="text-xs  text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             
             <tr>
                 <th scope='col' className=''>
@@ -117,8 +142,9 @@ function Products() {
             
         </tbody>
     </table>
+    </div>
 </div>}
-</Fragment>
+</div>
   )
 }
 

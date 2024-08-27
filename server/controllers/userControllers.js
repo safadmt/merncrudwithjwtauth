@@ -6,34 +6,7 @@ import jwt from "jsonwebtoken";
 import { generateToken } from "../utils/utils.js";
 
 export default {
-  adminSignup : async function (req, res,nex) {
-    if (!req.body) {
-      return res
-        .status(400)
-        .json({ error: "Req.body not found. Please provide the user details" });
-    }
-    
-    
-    const { error } = User.validate(req.body);
-    if (error) {
-      return res.status(400).json({ validationError: error.details });
-    }
-    try {
-      const user = await userHelper.getUserByEmail(req.body.email);
-      if (user) {
-        return res.status(409).json({ error: "User already exists" });
-      }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(req.body.password, salt);
-      req.body.password = hashedPassword;
-      req.body.role = 'admin'
-      const newuser = await userHelper.signuUser(req.body);
-      // n
-      return res.status(200).json(newuser);
-    } catch (err) {
-      nex(err)
-    }
-  }, 
+  
   userSignup: async function (req, res, next) {
     if (!req.body) {
       return res
@@ -78,10 +51,10 @@ export default {
       }
       const isPasswordTrue = await bcrypt.compare(req.body.password, user.password)
       if(!isPasswordTrue) {
-        return res.status(401).json("Incorrect password")
+        return res.status(401).json({error:"Incorrect password"})
       }
       if(user.email !== req.body.email) {
-        return res.status(401).json("Incorrect email")
+        return res.status(401).json({error:"Incorrect email"})
       }
       
         const accessToken = await generateToken('accessToken', {id:user.user_id, username:user.username,role:user.role}) 
@@ -145,33 +118,7 @@ export default {
     }
   },
 
-  refreshToken: (req,res,next) => { 
-     let cookeis = req.cookies;
-     
-     let valid = false
-     
-     if(!cookeis?.jwt) return res.status(401).json({message: "Unauthorized"})
-      const refreshToken = cookeis.jwt
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN, 
-      async (err, userInfo)=> {
-        console.log(userInfo)
-      if(err) {
-        return res.status(403).json("Forbidden")
-      }
-      try{
-        const user = await userHelper.getUser(userInfo.id)
-      if(!user) return res.status(401).json('Unauthorized');
-      const accessToken = await generateToken('accessToken', {id:user.user_id,email:user.email})
-      res.setHeader("Authorization", `Bearer ${accessToken}`)
-      }catch(err){
-        next(err)
-      }
-      
-      
-    })
-
-
-  },
+  
 
   logout : (req,res) => {
     const cookies = req.cookies?.jwt
@@ -182,5 +129,7 @@ export default {
   },
   isAuthorize : (req,res)=> {
     res.status(200).json({isAuth:1})
-  }
+  },
+
+ 
 };

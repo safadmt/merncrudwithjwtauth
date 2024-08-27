@@ -3,3 +3,12 @@ input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+/* Add this CSS to your styles */
+/* .responsive-table-container {
+    overflow-x: scroll;
+    width: 100%;
+    box-sizing: border-box;
+} */
+
+

@@ -9,6 +9,7 @@ export default {
                 user_id : parseInt(userid),
                 deleted: false
             },
+            
             select: {
                 user_id: 1,
                 username: 1,
@@ -16,7 +17,8 @@ export default {
                 role : 1,
                 createdAt: 1,
                 updatedAt: 1
-            }
+            },
+            
             })
             return user;
     },
@@ -32,7 +34,10 @@ export default {
                 email: 1,
                 createdAt: 1,
                 updatedAt: 1
-            }
+            },
+            orderBy: {
+               username : 'asc'
+              },
         })
         return users;
     },
@@ -69,7 +74,10 @@ export default {
             where: {
                 user_id: parseInt(id)
             },
-            data: info
+            data: {
+                username: info.username,
+                email: info.email
+            }
         })
         return updated
     }
