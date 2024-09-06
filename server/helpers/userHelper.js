@@ -41,14 +41,6 @@ export default {
         })
         return users;
     },
-    getUserByEmail : async function (email) {
-        const user = await prisma.users.findUnique({
-        where: {
-            email : email, deleted: false,
-        }
-        })
-        return user;
-    },
     signuUser: async function (userInfo) {
         const user = await prisma.users.create({
             data: userInfo

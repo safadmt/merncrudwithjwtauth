@@ -19,6 +19,7 @@ function RootAdmin() {
     ]
 
     useEffect(()=> {
+      const controller = new AbortController()
       async function isAuthorized() {
         try{
           const res = await axios.get('auth/admin')
@@ -33,6 +34,9 @@ function RootAdmin() {
         }
       }
       isAuthorized()
+      return ()=> {
+        controller.abort()
+      }
     },[])
   return (
     <div className=''>

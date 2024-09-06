@@ -104,6 +104,7 @@ function EditProduct() {
   return (
     <Fragment>
       {product ? (
+        <div className="mx-4 w-8/12">
         <ProductForm
           productInfo={product}
           handleChange={handleChange}
@@ -113,6 +114,7 @@ function EditProduct() {
           currentImg={currentImagePreviw}
           productError={errors}
         />
+        </div>
       ) : (
         <div>Pending...</div>
       )}

@@ -3,40 +3,24 @@ import renewToken from './renewToken.js';
 
 async function verfiyUser (req,res,next) {
     
-    const token = req.cookies.accessToken 
-     console.log(token , "token ");
-     console.log(req.cookies.jwt);
-     
+    const token = req.cookies.accessToken      
     try{
         if(!token || Object.values(token).length === 0) {
-               console.log("renew")
-            const role = await renewToken(req,res)
-            
-            console.log( role, "role royse"); 
-            if(role === "user") {
-                return next();
-            }else{
-                return res.status(401).json({message: "Forbidden"})
-            }
-           
-            
+            await renewToken(req,res)
+            next()
         }else {
-            jwt.verify(token, process.env.JWt_ACCESS_TOKEN, async(err,token)=> {
+            jwt.verify(token, process.env.JWt_ACCESS_TOKEN, async(err,userInfo)=> {
                 if(err) {
                     if(err.name === 'TokenExpiredError') {
                         const role = await renewToken(req,res)
-                       
-                        if(role === "user") {
-                            next()
-                        }else{
-                            return res.status(403).json({message: "Forbidden"})
-                        }
-                        
+                        next()
                     }else{
                         return res.status(403).json({message: "Forbidden"})
                     }
                     
                 }else {
+                    
+                    req.user = {role: userInfo.role}
                     next()
                 }
                 
@@ -44,53 +28,20 @@ async function verfiyUser (req,res,next) {
         }
         
     } catch(err) {
-        console.log(err);
-        
         return res.status(500).json(err)
     }
     
     
 }
 
-async function verifyAdmin (req,res,next) {
-    const cookies = req.cookies   
-    try{
-        if(!cookies?.accessToken) {
-            const role = await renewToken(req,res)
-           
-            if(role === "admin") {
-                return next();
-            }else{
-                return res.status(401).json({message: "Forbidden"})
-            }
-            
+const checkRole = (role) => {
+    return (req,res,next)=> {
+        if(req.user.role === role) {
+            return next()
+        }else{
+            return res.status(403).json({message:"Forbidden"})
         }
-        let token = cookies.accessToken
-        jwt.verify(token, process.env.JWt_ACCESS_TOKEN, async(err,token)=> {
-            if(err) {
-                if(err.name === 'TokenExpiredError') {
-                    const role = await renewToken(req,res)
-                   console.log("roles", role);
-                   
-                    if(role && role === 'admin') {
-                        return next()
-                    }else{
-                        return res.status(403).json({message: "Forbidden"})
-                    }
-                    
-                }else{
-                    return res.status(403).json({message: "Forbidden"})
-                }
-                
-            }else {
-                return next()
-            }
-            
-        })
-    } catch(err) {
-        
-        return res.status(500).json(err)
     }
-    
 }
-export {verfiyUser,verifyAdmin}
+
+export {verfiyUser,checkRole}

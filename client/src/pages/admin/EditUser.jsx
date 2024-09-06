@@ -61,7 +61,7 @@ function EditUser() {
   
   return (
     <Fragment>
-        <form action=""  className="flex justify-center items-center flex-col w-[500px]" onSubmit={handleSubmit}>
+        <form action=""  className="mx-auto mt-12 p-6 border-2 rounded-sm items-center flex-col w-[500px]" onSubmit={handleSubmit}>
             <InputCmp 
             type={'text'}
             name={"username"}

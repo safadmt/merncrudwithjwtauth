@@ -2,12 +2,12 @@ import express from 'express'
 import userControllers from '../controllers/userControllers.js';
 import loginLimit from '../middleware/login-rate-limit.js';
 const router = express.Router();
-import { verfiyUser, verifyAdmin } from '../middleware/jwtVerify.js';
+import { verfiyUser, checkRole } from '../middleware/jwtVerify.js';
 
 
-router.get('/all',verifyAdmin, userControllers.getAllUser)
+router.get('/all',verfiyUser,checkRole('admin'), userControllers.getAllUser)
 router.get("/:userid", userControllers.getOneUser);
-router.delete('/:userid',verifyAdmin, userControllers.deleteOneUser)
-router.patch('/:userid',verifyAdmin, userControllers.updateUser)
+router.delete('/:userid',verfiyUser,checkRole('admin'), userControllers.deleteOneUser)
+router.patch('/:userid',verfiyUser,checkRole('admin'), userControllers.updateUser)
 
 export default router

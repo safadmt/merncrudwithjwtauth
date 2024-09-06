@@ -21,7 +21,7 @@ export default {
       return res.status(400).json({ validationError: error.details });
     }
     try {
-      const user = await userHelper.getUserByEmail(req.body.email);
+      const user = await userHelper.getUser({email: email, deleted: false});
       if (user) {
         return res.status(409).json({ error: "User already exists" });
       }
@@ -44,7 +44,7 @@ export default {
     console.log(req.body);
     
     try {
-      const user = await userHelper.getUserByEmail(req.body.email);
+      const user = await userHelper.getUser({email: req.body.email});
       console.log(user)
       if (!user) {
         return res.status(409).json({ error: "User not registered. Please register" });
@@ -127,7 +127,10 @@ export default {
     res.clearCookie('accessToken', {httpOnly:true,sameSite:'None',secure:true})
     res.status(200).json({message:"Cookie cleared"})
   },
+
   isAuthorize : (req,res)=> {
+    console.log("undefi",req.user);
+    
     res.status(200).json({isAuth:1})
   },
 
