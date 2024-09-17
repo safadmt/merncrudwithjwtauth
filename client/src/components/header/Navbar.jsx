@@ -1,4 +1,4 @@
-import React, { useState, useEffect,  } from 'react';
+import React, { useState, useEffect, memo,  } from 'react';
 import './navbar.css';
 import { IoMenu } from "react-icons/io5";
 import { IoClose } from "react-icons/io5";
@@ -46,15 +46,18 @@ const Navbar = ({ title, items }) => {
     };
 
     const handleLogout = async() => {
+        
         try{
-            const response = await axios.get('/auth/logout')
-            if(response.data) {
+            
+            const response = await axios.get('api/auth/logout')            
+            if(response.status === 204 || response.status === 200) {
                 dispatch({type: "set_user", payload: {}})
                 toast.success("Logout successfull")
                 Navigate('/')
             }
         }catch(err) {
-
+            console.log(err);
+            
         }
         
     }
@@ -79,8 +82,8 @@ const Navbar = ({ title, items }) => {
     }
     return (
         <div id='navbar'>
-            <div className='w-full font-medium bg-[#0336FF] flex justify-between items-center h-[80px] ps-8 pe-12 box-border text-white shadow-sm shadow-[#0336FF]'>
-                <div>{title}</div>
+            <div className='w-full font-medium bg-[#252422] flex justify-between items-center h-[80px] ps-8 pe-12 box-border text-white shadow-md shadow-[#5e503f]'>
+                <div className='font-medium text-xl'><Link to={'/'}>{title}</Link></div>
                 <div className='menuicon'>
                     {windowMenu ? (
                         <IoMenu size={25} onClick={handleMenuToggle} />
@@ -88,19 +91,21 @@ const Navbar = ({ title, items }) => {
                         <IoClose size={25} onClick={handleMenuToggle} />
                     )}
                 </div>
-                {state?.user?.username ? <ul className='font-medium' style={{ display: ulDisplay }}>
+                {state?.user?.username ? 
+                <ul className='font-medium' style={{ display: ulDisplay }}>
                     <li><Link to={'/shop'}>shop</Link></li>
                     <li>{state?.user?.username}</li>
                     <li className='hover:cursor-pointer' onClick={handleLogout}>Logout</li>
-                </ul> :
+                </ul> 
+                : 
                 <ul className='font-medium hover:cursor-pointer' style={{ display: ulDisplay }}>
-                    {items?.map((item, index) => (
-                        <li key={index} onClick={()=> handleClick(item)}>{item}</li>
-                    ))}
+                   {items?.map((item, index) => (
+                       <li key={index} onClick={()=> handleClick(item)}>{item}</li>
+                ))}
                 </ul>}
             </div>
         </div>
     );
 };
 
-export default Navbar;
+export default memo(Navbar);

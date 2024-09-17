@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { memo } from 'react'
 
 function InputCmp(props) {
   const {value="",type ,handleChange,name="", placeholder=""} = props
@@ -9,4 +9,4 @@ function InputCmp(props) {
   placeholder={placeholder}/>
 }
 
-export default InputCmp
+export default memo(InputCmp) 

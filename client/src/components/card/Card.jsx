@@ -1,19 +1,27 @@
 import React from 'react'
 import { FaRupeeSign } from "react-icons/fa";
+import { Link } from 'react-router-dom';
 function Card(props) {
    const {item} = props
+    console.log(item);
     
   return (
-    <div className='border-2 border-[#fdf0d5] p-4 h-[300px] box-border'>
+    <div className='border border-[#fef9ef] p-4 h-[300px] rounded-lg box-border shadow-xl'>
         <div>
-            <img className='h-[150px] mx-auto'
-            src={`http://localhost:5000/images/${item.image_id}`} alt=""/>
+            <Link to={`/product/${item.product_id}`} ><img className='h-[150px] mx-auto'
+            src={`${item.images[0].image_url}`} alt="" loading='lazy'/>
+            </Link>
         </div>
-        <div className='max-w-[280px]'>
-            <p className='truncate'>{item.name}</p>
-            <p className='truncate'>{item.model}</p>
-            <p className='flex items-center'><FaRupeeSign size={14} />{item.price}</p>
-            <p className='truncate'>{item.description}</p>
+        <div className='mt-2'>
+            <p className='truncate font-medium'>{item?.product_name}</p>
+            <div className='flex items-center gap-1'>
+            <FaRupeeSign size={14} />
+            <p className='font-medium'>{item?.price}</p>
+
+            </div>
+            <p className='font-medium block'>{item.category?.category_name}</p>
+
+            <p className='line-clamp-2 font-medium text-gray-700'>{item?.description}</p>
             
         </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useGlobalContext } from "../../context&reducer/context";
 import axios from "axios";
@@ -18,22 +18,22 @@ function EditUser() {
     
   });
   const [errors, setErrors] = useState({})
-  useEffect(() => {
-    async function getUser() {
-      try {
-        const res = await axios.get(`user/${userId}`);
+  // useEffect(() => {
+  //   async function getUser() {
+  //     try {
+  //       const res = await axios.get(`user/${userId}`);
 
-        const { username, email } = res.data;
-        setUser({ ...user, username,email});
-      } catch (err) {
-        if (err?.response?.status === 401 || err?.response?.status === 403) {
-          dispatch({ type: "set_user", payload: {} });
-          Navigate("/");
-        }
-      }
-    }
-    getUser();
-  }, []);
+  //       const { username, email } = res.data;
+  //       setUser({ ...user, username,email});
+  //     } catch (err) {
+  //       if (err?.response?.status === 401 || err?.response?.status === 403) {
+  //         dispatch({ type: "set_user", payload: {} });
+  //         Navigate("/");
+  //       }
+  //     }
+  //   }
+  //   getUser();
+  // }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;

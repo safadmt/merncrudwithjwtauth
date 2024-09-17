@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGlobalContext } from "../../../context&reducer/context";
 import Card from "../../../components/card/Card";
+import { LineSpinner } from "../../../components/spinners/Spinner";
 
 function Shop() {
   const [isPending, startTransition] = useTransition();
@@ -18,10 +19,11 @@ function Shop() {
   async function getProduct() {
     try {
         
-      const response = await axios.get("product/all");
-      console.log(response, "resp");
+      const response = await axios.get("api/users/products/");
+      console.log(response);
+      
       startTransition(() => {
-        setProducts(response.data);
+        setProducts(response.data.data);
       });
     } catch (err) {
       console.log(err);
@@ -39,14 +41,17 @@ function Shop() {
     <div>
       <div className="">
         {isPending ? (
-          <div>Loading...</div>
-        ) : products.length === 0 ? (
-          <div>No products</div>
+          <div className="">
+            <div className="flex justify-center py-32"><LineSpinner size={45} color={"black"} /></div>
+          </div>
         ) : (
-          <div className="product-display-div m-6 ">
+          <div className=" ">
+            <h1 className="text-center mt-10 font-bold text-xl">Products</h1>
+            <div className="p-10 product-display-div">
             {products?.map((item) => {
               return <Card key={item.product_id} item={item} />;
             })}
+            </div>
           </div>
         )}
       </div>

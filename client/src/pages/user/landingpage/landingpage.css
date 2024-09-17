@@ -1,0 +1,12 @@
+.landingpage{
+    width: 100%;
+    height: 100dvh;
+    
+}
+.landing-page-heading {
+    font-weight: bold;
+    font-size: clamp(16px, 4vw, 34px);
+}
+.landing-page-sentence{
+    font-size: clamp(8px, 2vw, 18px);
+}

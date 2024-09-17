@@ -1,70 +1,128 @@
-import React, { useState } from 'react'
+import React, { lazy,Suspense} from 'react'
 import './App.css'
 import {RouterProvider} from 'react-router-dom'
 import { createBrowserRouter } from 'react-router-dom'
-import RootUser from './pages/Layout/RootUser'
-import Home from './pages/user/home/Home'
-import RootAdmin from './pages/Layout/RootAdmin'
-import AdminLogin from './pages/admin/AdminLogin'
+const RootUser = lazy(()=> import('./Layout/RootUser'))
+const LandingPage = lazy(()=> import('./pages/user/landingpage/LandingPage'))
+const RootAdmin = lazy(()=> import('./Layout/RootAdmin'))
+const  AdminLogin = lazy(()=> import('./pages/admin/AdminLogin'))
+const ViewProduct = lazy(()=> import('./pages/user/viewproduct/ViewProduct'))
 import {  GlobalStateProvider } from './context&reducer/context'
 import axios from 'axios'
-import AddProduct from './pages/admin/AddProduct'
-import Products from './pages/admin/Products'
+const AddProduct = lazy(()=> import('./pages/admin/AddProduct'))
+const  Products = lazy(()=> import('./pages/admin/Products')) 
 axios.defaults.baseURL = 'http://localhost:5000/'
 axios.defaults.withCredentials = true
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
-import Shop from './pages/user/shop/Shop'
-import User from './pages/admin/User'
-import EditProduct from './pages/admin/EditProduct'
-import EditUser from './pages/admin/EditUser'
+  import LoadingSkeleton from './components/skeleton/LoadingSkeleton'
+const Shop = lazy(()=> import('./pages/user/shop/Shop'))
+const User = lazy(()=> import('./pages/admin/User'))
+const EditProduct = lazy(()=> import('./pages/admin/EditProduct'))
+const EditUser = lazy(()=> import('./pages/admin/EditUser'))
+const AdminHome = lazy(()=> import('./pages/admin/AdminHome'))
 const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <RootUser/>,
-      children : [
-        {
-            path: '/',
-            element : <Home/>
-        },
-        {
-          path: '/shop',
-          element : <Shop/>
-        }
-      ]
-    },
-    {
-      path:'/admin',
-      element: <RootAdmin/>,
-      children: [
-        {
-          path: '/admin',
-          element: <AddProduct/>
-        },
-        {
-          path: '/admin/products',
-          element: <Products/>
-        },
-        {
-          path: '/admin/users',
-          element: <User/>
-        },
-        {
-          path: '/admin/product/edit/:productId',
-          element: <EditProduct/>
-        },
-        {
-          path: '/admin/user/edit/:userId',
-          element: <EditUser/>
-        }
-        
-      ]
-    },
-    {
-      path:'/auth/admin-login',
-      element: <AdminLogin/>
-    }
-  ]);
+  {
+    path: '/',
+    element: (
+      <Suspense fallback={<LoadingSkeleton/>}>
+        <RootUser />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: '/',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <LandingPage/>
+          </Suspense>
+        ),
+      },
+      {
+        path: '/shop',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <Shop />
+          </Suspense>
+        ),
+      },
+      {
+        path:"/product/:productid",
+        element : (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <ViewProduct/>
+          </Suspense>
+        )
+      }
+    ],
+  },
+  {
+    path: '/admin',
+    element: (
+      <Suspense fallback={<LoadingSkeleton/>}>
+        <RootAdmin />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: '/admin',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <AdminHome />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'add-product',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <AddProduct />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'products',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <Products />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'users',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <User />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'product/edit/:productId',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <EditProduct />
+          </Suspense>
+        ),
+      },
+      {
+        path: 'user/edit/:userId',
+        element: (
+          <Suspense fallback={<LoadingSkeleton/>}>
+            <EditUser />
+          </Suspense>
+        ),
+      },
+    ],
+  },
+  {
+    path: '/auth/admin-login',
+    element: (
+      <Suspense fallback={<LoadingSkeleton/>}>
+        <AdminLogin />
+      </Suspense>
+    ),
+  },
+]);
   
 function App() {
   return (

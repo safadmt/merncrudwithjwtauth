@@ -1,0 +1,5 @@
+.layout-view-product{
+    display: grid;
+    grid-template-columns: 800px 1fr;
+    gap: 10px;
+}

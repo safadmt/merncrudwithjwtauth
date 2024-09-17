@@ -6,10 +6,14 @@ import { toast } from 'react-toastify'
 import { userSchema } from '../../validation'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { LineSpinner } from '../spinners/Spinner'
+import useErrorHandler from '../../hooks/useErrorHandler'
 
 function UserLogin() {
+    const {authErrorHandler} = useErrorHandler()
     const [loginInfo, setLoginInfo] = useState({email: "",password:""})
     const {state, dispatch} = useGlobalContext()
+    const [loading,setLoading] = useState(false)
     const Navigate = useNavigate();
 
     async function handleSubmit (e) {
@@ -18,31 +22,19 @@ function UserLogin() {
       console.log(email,password);
       
       try{
-        await userSchema.validate({username:"safadf", email,password})
-        const response = await axios.post('auth/login',loginInfo)
-        if(response?.data?.user?.role === 'user') {
+        await userSchema.validate({username:"safadf", email,password},{abortEarly:true})
+        setLoading(true)
+        const response = await axios.post('api/auth/user/login',loginInfo)
+        setLoading(false)
           var {username,user_id} = response.data.user
           dispatch({type:"set_auth_sidebar", payload:false})
           dispatch({type:"set_user",payload: {username, user_id}})
           toast.success("Login successfull")
-        }else if(response?.data?.user?.role === "admin") {
-          dispatch({type:"set_user",payload: {username, user_id}})
-          Navigate('/admin')
-          toast.success("Login successfull")
-        }
+        
       }catch(error) {
-        if(error.name === 'ValidationError') {
-          toast.warning(error.message)
-        }else if(error?.response?.status === 400 ) {
-          console.log(error.response.data?.validationError , "eror valid");
-          
-          error.response.data?.validationError?.forEach((item)=> {
-            toast.warning(item.message)
-          })
-          
-        }else if(error?.response?.status === 409 || error?.response?.status === 401) {
-          toast.warning(error?.response?.data?.error)
-        }
+        authErrorHandler(error)
+      }finally{
+        setLoading(false)
       }
       
 
@@ -66,10 +58,13 @@ function UserLogin() {
             value={loginInfo.password}
             placeholder="Enter your password"
             handleChange={handleChange}/>
-            <Button type={"submit"} className="bg-[#0336FF] w-full font-medium text-white" label={"Login"}/>
+            <Button type={"submit"} 
+            className="bg-[#f94144] w-full font-medium text-white" 
+            disabled={loading ? true : false}
+            label={loading ? <LineSpinner size={25} color={"white"}/> : "Login"}/>
         </form>
-        <p className='text-sm'>Don't have an account? please <span 
-        className='text-blue-800 hover:cursor-pointer'
+        <p className='text-sm text-white'>Don't have an account? please <span 
+        className='text-white hover:cursor-pointer'
         onClick={()=> dispatch({type: "set_login_register", payload:false})}>Register</span></p>
     </Fragment>
   )

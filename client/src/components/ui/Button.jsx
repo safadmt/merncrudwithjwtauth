@@ -1,14 +1,18 @@
-import { Component } from "react";
+import React, { memo } from "react";
+function Button(props) {
+  const { className, label, type="button", onClick , disabled = false} = props;
 
-export default class Button extends Component {
-    render () {
-        const {className,label,type, onClick} = this.props
-
-        return <button 
+  return (
+    <>
+      <button
         type={type}
-         
-        onClick={this.props.handleClick} 
+        onClick={onClick}
+        disabled = {disabled}
         className={`px-4 py-2 mt-2 ${className}`}
-       >{label}</button>
-    }
+      >
+        {label}
+      </button>
+    </>
+  );
 }
+export default memo(Button)

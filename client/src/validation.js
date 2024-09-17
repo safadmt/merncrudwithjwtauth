@@ -1,7 +1,7 @@
 import { object, string, number } from 'yup';
 
 let productSchema = object({
-    name: string().trim()
+    product_name: string().trim()
         .min(4, 'Product name must be at least 4 characters long')
         .required('Product name is required'),
     
@@ -10,14 +10,23 @@ let productSchema = object({
         .positive('Price must be a positive number')
         .integer('Price must be an Number'),
 
-    model: string().trim()
-        .required('Model is required'),
-
     description: string().trim()
         .required('Description is required'),
+    
+    stock_available: number()
+    .required('Stock availability is required')
+    .positive('Stock available must be a positive number')
+    .integer('Stock available must be an integer'),
 
-    image: string()// Assuming 'image' is a URL or string; otherwise, adjust accordingly
-        .required('Image is required')
+    brand_id : number().
+    required('Brand is reuired')
+    .integer('Brand is required'),
+
+    category_id : number().
+    required('Category is reuired')
+    .integer('Category is required')
+
+
 });
 
 

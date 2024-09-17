@@ -1,119 +1,89 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useGlobalContext } from "../../context&reducer/context";
+import React, { Fragment, useState,lazy ,Suspense} from "react";
+import {  useParams } from "react-router-dom";
 import axios from "axios";
-import ProductForm from "../../components/productform/ProductForm";
+const ProductForm = lazy(()=> import("../../components/form/ProductForm"));
 import { toast } from "react-toastify";
-import { productSchema } from "../../validation";
+import useErrorHandler from "../../hooks/useErrorHandler";
+import useFetchProduct from "../../hooks/useFetchProduct";
+import useProductSubmit from "../../hooks/useUpdateProduct";
+import ImageForm from "../../components/form/ImageForm";
+import LoadingSkeleton from "../../components/skeleton/LoadingSkeleton";
 
 function EditProduct() {
-  const { productId } = useParams();
-  const { state, dispatch } = useGlobalContext();
-  const Navigate = useNavigate();
-
-  const [product, setProduct] = useState({
-    name: "",
-    model: "",
-    price: "",
-    description: "",
-    image: "",
-  });
-  const [prevImage, setPrevImage] = useState("");
-  const [currentImagePreviw, setCurrentImagePreview] = useState("");
+  const [images, setImages] = useState([])
   const [errors, setErrors] = useState({})
-  useEffect(() => {
-    async function getProduct() {
-      try {
-        const res = await axios.get(`product/${productId}`);
-
-        const { name, model, price, description, image } = res.data;
-        setProduct({ ...product, name, model, price, description });
-        setPrevImage(res.data.image_id);
-      } catch (err) {
-        if (err?.response?.status === 401 || err?.response?.status === 403) {
-          dispatch({ type: "set_user", payload: {} });
-          Navigate("/");
-        }
-      }
-    }
-    getProduct();
-  }, []);
+  const [loading, setLoading] = useState({fetch: false, updating: false})
+  const [isImageLoading,setImageLoading] = useState(false)
+  const {handleValidationError,handleServerError} = useErrorHandler()
+  const { productId } = useParams();
+  const {prevImage,setPrevImage, setProduct, product} = useFetchProduct(productId,handleServerError,setLoading,loading)
+  const handleSubmit = useProductSubmit(productId,product,setLoading,loading,setPrevImage,handleValidationError,handleServerError)        
 
   function handleChange(e) {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    console.log("hello submit")
-    try {
-      const {name,price,model,description,} = product
-      await productSchema.validate({name,price,model,description, image:"dummy"}, {abortEarly: false});
-        console.log(product);
-        
-      // Proceed with form submission (e.g., API call)
-      const formData = new FormData();
-      formData.append("name", product.name);
-      formData.append("model", product.model);
-      formData.append("price", product.price);
-      formData.append("description", product.description);
-      if (product.image !== "dummy") {
-        formData.append("image", product.image);
-      }
+  async function handleImageSubmit () {
+    event.preventDefault()
+    if(images.length === 0) {
+      return
+    }
+    const formData = new FormData()
+    images.forEach(item=> {
+      formData.append('image', item)
+    })
 
-      const response = await axios.patch(`product/${productId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      toast.success("Updated successfully");
-      setCurrentImagePreview("")
-    } catch (err) {
-        console.log(err);
-        
-      if (err.name === "validationErrors") {
-          const formattedErrors = {};
-
-          validationErrors.inner.forEach((error) => {
-            formattedErrors[error.path] = error.message;
-          });
-          setErrors(formattedErrors)
-          console.log(errors);
-          
-        
-      }else if(err?.response?.status === 401 || err?.response?.status === 403) {
-        dispatch({type:"set_user", payload: {}})
-      }
+    try{
+      setLoading({...loading, images: true})
+      const response = await axios.put(`api/products/images/${productId}`, formData,{
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      
+      toast.success("Updated successfully")
+    }catch(err) {
+      
+      handleServerError(err)
+    }finally {
+      setLoading({...loading, images: false})
     }
   }
 
   function handleFileChange(e) {
-    setProduct({...product, image: e.target.files[0]})
-    const reader = new FileReader();
-
-    reader.onloadend = () => {
-      setCurrentImagePreview(reader.result);
-    };
-    if (e.target.files[0]) {
-      setPrevImage("");
-      reader.readAsDataURL(e.target.files[0]);
-    } else {
-      setPrevImage(product.image_id);
-      setCurrentImagePreview("");
-    }
+    const files = Array.from(e.target.files);
+      const imageUrls = files.map(file => ({
+        original: URL.createObjectURL(file),
+        thumbnail: URL.createObjectURL(file)
+      }));
+      
+      setPrevImage(imageUrls);
+      setImages(files)
+      
   }
   return (
     <Fragment>
       {product ? (
-        <div className="mx-4 w-8/12">
+        <div className="mx-4 ">
+        <Suspense fallback={<LoadingSkeleton/>}>
         <ProductForm
           productInfo={product}
           handleChange={handleChange}
           handleSubmit={handleSubmit}
           handleFile={handleFileChange}
-          prevImg={prevImage}
-          currentImg={currentImagePreviw}
+          productHeading={"Edit product details"}
+          currentImg={prevImage}
           productError={errors}
+          loading = {loading.updating}
+          showFileInput={false}
         />
+        </Suspense>
+         <ImageForm handleFileChange={handleFileChange}
+         handleImageSubmit={handleImageSubmit}
+         prevImage={prevImage}
+         loading={isImageLoading}
+         />
         </div>
       ) : (
         <div>Pending...</div>

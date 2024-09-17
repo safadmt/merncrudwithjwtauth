@@ -4,4 +4,4 @@ function Label({label}) {
   return <label className='mb-2 font-medium text-gray-950'>Username</label>
 }
 
-export default Label
+export default memo(Label) 
