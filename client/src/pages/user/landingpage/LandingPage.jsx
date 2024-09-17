@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom'
 function LandingPage() {
     const {state, dispatch} = useGlobalContext()
     const Navigate = useNavigate()
-    console.log(state.user);
     
   return (
     <div>
@@ -30,8 +29,7 @@ function LandingPage() {
                        performance, and style.
 
 Explore the latest in cutting-edge sound technology, crafted to deliver rich bass,
- clear mids, and precise highs that bring your audio to life. At <strong>Sound Pulse</strong> ,
-  we believe in the power of sound to transform any moment into something extraordinary.</p>
+ clear mids, and precise highs that bring your audio to life.</p>
                 <Button label={"Shop now"} className={"bg-white text-[#252422]"} 
                 onClick={()=> {
                     Object.keys(state?.user).length > 0 ? Navigate('/shop') : dispatch({type: "set_auth_sidebar", payload: true})

@@ -13,7 +13,7 @@ function uploadProductImage() {
       storage: storage,
       fileFilter: function (req, file, cb) {
         // Allow only image files with specific extensions
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|avif)$/)) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|avif|jfif)$/)) {
           return cb(new Error("Only image files are allowed!") as any, false);
         }
   

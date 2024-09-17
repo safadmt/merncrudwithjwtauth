@@ -20,7 +20,7 @@ function ViewProduct() {
           </div>
           <div className=' text-start mt-4'>
               <h1 className='font-bold text-3xl text-[#f94144]'>{product?.product_name}</h1>
-              <p className='flex items-center mt-4'><FaRupeeSign/><strong>{product?.price}</strong></p>
+              <p className='flex items-center mt-4'><FaRupeeSign/><strong>{product?.price}/-</strong></p>
               <p>Brand : <strong>{product.brand_id.brand_name}</strong></p>
               <p>Category : <strong>{product.category_id.category_name}</strong></p>
               <p className='break-words mt-2'><strong>Description: </strong> {product.description}</p>

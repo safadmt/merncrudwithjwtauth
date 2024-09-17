@@ -11,8 +11,9 @@ import { handleError } from './middleware/errorHandling';
 const app = express();
 
 // Middleware setup
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.ALLOWED_ORIGIN,
     methods: "GET,PUT,PATCH,POST,DELETE",
     credentials: true
 }));

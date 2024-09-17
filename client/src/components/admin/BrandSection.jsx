@@ -40,7 +40,6 @@ function BrandSection() {
         }else{          
           updateBrand(brand, editBrandInfo.brand_id)
         }
-        
       }
     }
   return (

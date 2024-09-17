@@ -12,23 +12,24 @@ const useErrorHandler = () => {
   // Function to handle Yup validation errors
   const handleValidationError = (err, abortEarly = true) => {
     if (err.name === "ValidationError") {
+      console.log("validation error");
+      
       const formattedErrors = {};
       if (abortEarly) {
         // Handle single error (abortEarly: true)
-        toast.error(err.message);
+       return toast.error(err.message);
       } else {
         // Handle multiple errors (abortEarly: false)
-        err.inner.forEach((error) => {
-          formattedErrors[error.path] = error.message;
+        let errors = err.inner.map((error) => {
+          return error.message;
         });
+       return toast.error(errors.join(','))
       }
     }
   };
 
   // Function to handle server errors (Axios)
   const handleServerError = (err) => {
-    console.log(err);
-
     if (axios.isAxiosError(err)) {
       if (err.response) {
         const { status, data } = err.response;
@@ -36,7 +37,7 @@ const useErrorHandler = () => {
           console.log(err);
 
           Array.isArray(data?.error)
-            ? toast.error(data.error[0].message)
+            ? toast.error(data.error.join(','))
             : toast.error(data.error);
         } else if (status === 403 || status === 401) {
           Swal.fire("Your session has ended. Please log in again to continue.");
@@ -58,9 +59,6 @@ const useErrorHandler = () => {
       } else {
         toast.error(`Request Error: ${err.message}`);
       }
-    } else {
-      // Handle unexpected errors
-      toast.error("An unexpected error occurred. Please try again later.");
     }
   };
 

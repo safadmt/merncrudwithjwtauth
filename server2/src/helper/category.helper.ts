@@ -16,7 +16,10 @@ export class CategoryHelper {
 
     static async getCategories (info: object) : Promise<any> {
         let response = await Prisma.categories.findMany({
-            where: info
+            where: info,
+            orderBy: {
+                category_id: "desc"
+            }
         })
         return response
     }

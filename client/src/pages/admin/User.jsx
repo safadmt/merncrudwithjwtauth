@@ -19,6 +19,7 @@ function User() {
   const [showEditForm, setShowEditForm] = useState(false)
   const [editUser,setEditUser] = useState({username:"",email:"", user_id:""})
     const [loading,setLoading] = useState(false)
+
   const handleSubmit = async (e)=> {
     e.preventDefault()
     try{
@@ -29,6 +30,8 @@ function User() {
       setRefresh(prev => !prev);
       toast.success("Updated successfully");
     }catch(err) {
+      console.log(err);
+      
         handleValidationError(err)
         handleServerError(err)
     }finally{

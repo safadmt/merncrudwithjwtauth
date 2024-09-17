@@ -86,7 +86,7 @@ function EditProduct() {
          />
         </div>
       ) : (
-        <div>Pending...</div>
+        <LoadingSkeleton/>
       )}
     </Fragment>
   );

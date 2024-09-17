@@ -25,10 +25,13 @@ import useErrorHandler from '../../hooks/useErrorHandler'
     async function handleSubmit (e) {
       e.preventDefault()
       try {
-        console.log(productInfo);
-        console.log(images);
         
-        
+        if(Object.values(productInfo).includes("")) {
+          return toast.warning('Required all field')
+        }
+        if(images.length === 0) {
+          return
+        }
         await productSchema.validate(productInfo, { abortEarly: true });
         console.log('Form data is valid:', productInfo)
         // Proceed with form submission (e.g., API call)

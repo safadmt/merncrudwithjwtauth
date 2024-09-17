@@ -16,10 +16,10 @@ function Card(props) {
             <p className='truncate font-medium'>{item?.product_name}</p>
             <div className='flex items-center gap-1'>
             <FaRupeeSign size={14} />
-            <p className='font-medium'>{item?.price}</p>
+            <p className='font-medium'>{item?.price}/-</p>
 
             </div>
-            <p className='font-medium block'>{item.category?.category_name}</p>
+            <p className='font-medium block text-gray-700'>{item?.brand?.brand_name} {item.category?.category_name}</p>
 
             <p className='line-clamp-2 font-medium text-gray-700'>{item?.description}</p>
             

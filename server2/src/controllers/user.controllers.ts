@@ -2,6 +2,8 @@ import { Response, Request, NextFunction } from "express";
 import { UserHelper } from "../helper/users.helpers";
 import { UserSchema } from "../validators/userSchema";
 import {  Prisma } from "@prisma/client";
+import {z} from 'zod'
+
 export class UserController {
     static async getUsers (req:Request, res:Response, next:NextFunction) {
         try{
@@ -36,7 +38,12 @@ export class UserController {
             const user = await UserHelper.updateUser(parseInt(userid), req.body);
             return res.status(200).json({data: user})
         }catch(err:any) {
-            if(err instanceof Prisma.PrismaClientKnownRequestError) {
+            if(err instanceof z.ZodError) {
+                return res.status(400).json({error: err.issues.map(item=> {
+                     return `${item.message} at ${item.path.join(" ")}`
+                })})
+                
+            }else if(err instanceof Prisma.PrismaClientKnownRequestError) {
                 if(err.code === 'P2002') {
                     return res.status(409).json({error:"The email you provided already in use"})
                 }

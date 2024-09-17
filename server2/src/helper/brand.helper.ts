@@ -33,7 +33,10 @@ export class BrandHelper {
 
     static async getBrands (info: object) {
         let response = await Prisma.brands.findMany({
-            where: info
+            where: info,
+            orderBy : {
+                brand_id : "desc"
+            }
         })
         return response
     }
